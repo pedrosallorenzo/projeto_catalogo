@@ -8,7 +8,8 @@ TIPOS = ("Filme", "Serie")
 STATUS = ("Pendente", "Assistido")
 
 
-class CTKApp(ctk.CTk):
+# Classe que armazena todas as informações da interface
+class MainWindow(ctk.CTk):
     def __init__(self, controller):
         super().__init__()
         ctk.set_appearance_mode("light")
@@ -21,7 +22,6 @@ class CTKApp(ctk.CTk):
         self._load_all()
 
     # Formulário
-
     def _build(self):
         frm = ctk.CTkFrame(self, corner_radius=10)
         frm.pack(fill="x", padx=10, pady=(10, 6))
@@ -119,7 +119,8 @@ class CTKApp(ctk.CTk):
 
         self.tv.bind("<<TreeviewSelect>>", self._on_select)
 
-    # Ações
+    # Ações + caixa de mensagem
+    # Carrega todas as mídias do catálogo
     def _load_all(self):
         self._clear_table()
         res = self.controller.listar_todas()
@@ -129,6 +130,7 @@ class CTKApp(ctk.CTk):
         for m in res["data"]:
             self._insert(m)
 
+    # Aplica os filtros que o usuário utilizou
     def _on_filter(self):
         ordem_lable = self.f_nota_ordem.get().strip().lower()
         nota_ordem = None
@@ -153,6 +155,7 @@ class CTKApp(ctk.CTk):
         for m in res["data"]:
             self._insert(m)
 
+    # Adiciona a nova mídia
     def _on_add(self):
         r = self.controller.adicionar(
             titulo=self.ent_titulo.get(),
@@ -167,6 +170,7 @@ class CTKApp(ctk.CTk):
             self._clear_form()
             self._load_all()
 
+    # Atualizar alguma característica que alguma mídia
     def _on_update(self):
         it = self._sel()
         if not it:
@@ -204,6 +208,7 @@ class CTKApp(ctk.CTk):
         if r["ok"]:
             self._load_all()
 
+    # Apagar algum ítem do catálogo
     def _on_delete(self):
         it = self._sel()
         if not it:
@@ -253,6 +258,7 @@ class CTKApp(ctk.CTk):
             ),
         )
 
+    # Ao selecionar algum ítem da tabela do catálogo
     def _sel(self):
         s = self.tv.selection()
         return None if not s else self.tv.item(s[0])
@@ -275,6 +281,7 @@ class CTKApp(ctk.CTk):
         if v[6] is not None:
             self.ent_nota.insert(0, v[6])
 
+    # Transforma texto para null ou int
     def _parse_optional_int(self, txt: str):
         t = (txt or "").strip().lower()
         if t in ("", "none", "null", "-"):

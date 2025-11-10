@@ -2,11 +2,12 @@ from typing import Optional, Dict, Any
 from model.midia import Midia, MidiaModel, TIPOS_VALIDOS, STATUS_VALIDOS
 
 
+# Classe que junta as ações CRUD com o resto da aplicação
 class MidiaController:
     def __init__(self, model: MidiaModel):
         self.model = model
 
-    # Função para criar (CREATE)
+    # Função para criar
     def adicionar(
         self,
         titulo: str,
@@ -60,11 +61,12 @@ class MidiaController:
         ok, msg, new_id = self.model.create(m)
         return {"ok": ok, "msg": msg, "data": new_id}
 
-    # Função para listar (READ)
+    # Função para listar
     def listar_todas(self) -> Dict[str, Any]:
         ok, msg, itens = self.model.list_all()
         return {"ok": ok, "msg": msg, "data": itens}
 
+    # Função que aplica os filtros
     def filtrar(
         self,
         titulo_like: Optional[str] = None,
@@ -87,7 +89,7 @@ class MidiaController:
             if tipo not in TIPOS_VALIDOS:
                 return {"ok": False, "msg": "Tipos do filtro inválidos."}
 
-        # nota
+        # Ordenamento da nota
         if nota_ordem:
             nota_ordem = nota_ordem.lower()
             if nota_ordem not in ("asc", "desc"):
@@ -108,7 +110,7 @@ class MidiaController:
         )
         return {"ok": ok, "msg": msg, "data": itens}
 
-    # Função para atualizar (UPDATE)
+    # Função para atualizar as informações de status e nota
     def atualizar_status_nota(
         self, id_midia: str, status: Optional[str] = None, nota: Optional[str] = None
     ) -> Dict[str, Any]:
@@ -136,6 +138,7 @@ class MidiaController:
         ok, msg = self.model.update_status_nota(_id, st, nt)
         return {"ok": ok, "msg": msg}
 
+    # Função que atualiza qualquer informação da mídia
     def atualizar_full(self, midia: Midia) -> Dict[str, Any]:
         # Validações reutilizadas
         if not midia.id_midia:
@@ -154,7 +157,7 @@ class MidiaController:
         ok, msg = self.model.update_full(midia)
         return {"ok": ok, "msg": msg}
 
-    # Função para excluir (DELETE)
+    # Função para excluir
     def excluir(self, id_midia: str) -> Dict[str, Any]:
         try:
             _id = int(id_midia)

@@ -1,3 +1,6 @@
+# Arquivo destinado ao teste da lógica por trás da aplicação
+# Testa suas funções no modelo CLI
+
 from config.db_connection import DatabaseConnection
 from model.midia import MidiaModel, Midia
 from controller.midia_controller import MidiaController

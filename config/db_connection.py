@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 
 
+# Classe para mapear os dados para conexão
 class DatabaseConnection:
     def __init__(self):
         load_dotenv()
@@ -14,6 +15,8 @@ class DatabaseConnection:
         self.password = os.getenv("DB_PASSWORD", "")
         self.database = os.getenv("DB_NAME", "db_projeto_catalogo")
 
+    # Função que abre a conexão com o banco de dados
+    # Junta com as informações do arquivo .env
     def get_connection(self):
         try:
             connection = mysql.connector.connect(
@@ -30,6 +33,7 @@ class DatabaseConnection:
             print(f"Erro ao conectar ao banco de dados: {e}")
             return None
 
+    # Função que encerra a conexão com o banco de dados
     def close_connection(self, connection):
         try:
             if connection and connection.is_connected():

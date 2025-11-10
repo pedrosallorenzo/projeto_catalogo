@@ -7,6 +7,7 @@ TIPOS_VALIDOS = {"filme", "serie"}
 STATUS_VALIDOS = {"pendente", "assistido"}
 
 
+# Classe que cria as opções do usuário
 @dataclass
 class Midia:
     id_midia: Optional[int] = None
@@ -18,6 +19,7 @@ class Midia:
     nota: Optional[int] = None
 
 
+# Classe que junta as propriedades com as colunas do banco de dados
 class MidiaModel:
     def __init__(self, db: DatabaseConnection):
         self.db = db
@@ -33,11 +35,12 @@ class MidiaModel:
             nota=row[6],
         )
 
+    # Retorna todas as linhas da consulta
     def _fetchall_as_midias(self, cursor) -> List[Midia]:
         rows = cursor.fetchall()
         return [self._row_to_midia(r) for r in rows]
 
-    # Função para criar / adicionar novos ítens
+    # Função para criar / adicionar novas mídias
     def create(self, midia: Midia) -> Tuple[bool, str, Optional[int]]:
         conn = self.db.get_connection()
         if not conn:
@@ -224,7 +227,7 @@ class MidiaModel:
         finally:
             self.db.close_connection(conn)
 
-    # Função para excluir ítens do catálogo
+    # Função para excluir algum ítem do catálogo
     def delete(self, id_midia: int) -> tuple[bool, str]:
         conn = self.db.get_connection()
         if not conn:
