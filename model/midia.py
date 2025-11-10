@@ -37,6 +37,7 @@ class MidiaModel:
         rows = cursor.fetchall()
         return [self._row_to_midia(r) for r in rows]
 
+    # Função para criar / adicionar novos ítens
     def create(self, midia: Midia) -> Tuple[bool, str, Optional[int]]:
         conn = self.db.get_connection()
         if not conn:
@@ -68,6 +69,7 @@ class MidiaModel:
         finally:
             self.db.close_connection(conn)
 
+    # Função para filtrar todos os ítens
     def list_all(self) -> Tuple[bool, str, List[Midia]]:
         conn = self.db.get_connection()
         if not conn:
@@ -87,6 +89,7 @@ class MidiaModel:
         finally:
             self.db.close_connection(conn)
 
+    # Função para filtrar os ítens específicos
     def filter(
         self,
         titulo_like: Optional[str] = None,
@@ -144,6 +147,7 @@ class MidiaModel:
         finally:
             self.db.close_connection(conn)
 
+    # Função que atualiza apenas o status e a nota
     def update_status_nota(
         self, id_midia: int, status: Optional[str], nota: Optional[int]
     ) -> Tuple:
@@ -178,6 +182,7 @@ class MidiaModel:
         finally:
             self.db.close_connection(conn)
 
+    # Função para atualizar todos os ítens do catálogo
     def update_full(self, midia: Midia) -> Tuple[bool, str]:
         if not midia.id_midia:
             return (False, "ID obrigatório para atualização completa.")
@@ -215,13 +220,16 @@ class MidiaModel:
         finally:
             self.db.close_connection(conn)
 
-    def delete(self, id_midia: int) -> Tuple[bool, str]:
+    # Função para excluir ítens do catálogo
+    def delete(self, id_midia: int) -> tuple[bool, str]:
         conn = self.db.get_connection()
         if not conn:
             return (False, "Falha na conexão com o banco.")
         try:
             with conn.cursor() as cur:
-                cur.execute("DELETE FROM tb_midia = %s", (id_midia))
+                cur.execute(
+                    "DELETE FROM tb_midia WHERE id_midia = %s", (int(id_midia),)
+                )
                 conn.commit()
                 if cur.rowcount == 0:
                     return (False, "ID não encontrado.")
