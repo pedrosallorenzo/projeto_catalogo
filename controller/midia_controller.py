@@ -70,9 +70,9 @@ class MidiaController:
         titulo_like: Optional[str] = None,
         genero: Optional[str] = None,
         status: Optional[str] = None,
+        tipo: Optional[str] = None,
         ano: Optional[str] = None,
-        nota_op: Optional[str] = None,
-        nota_val: Optional[str] = None,
+        nota_ordem=None,
     ) -> Dict[str, Any]:
 
         ano_int = None
@@ -82,18 +82,16 @@ class MidiaController:
             except ValueError:
                 return {"ok": False, "msg": "Ano do filtro deve ser numérico."}
 
+        if tipo:
+            tipo = tipo.strip().lower()
+            if tipo not in TIPOS_VALIDOS:
+                return {"ok": False, "msg": "Tipos do filtro inválidos."}
+
         # nota
-        val_int = None
-        if nota_val not in (None, "", "None"):
-            try:
-                val_int = int(nota_val)
-                if not (0 <= val_int <= 10):
-                    return {
-                        "ok": False,
-                        "msg": "Nota do filtro deve estar entre 0 e 10.",
-                    }
-            except ValueError:
-                return {"ok": False, "msg": "Nota do filtro deve ser numérica."}
+        if nota_ordem:
+            nota_ordem = nota_ordem.lower()
+            if nota_ordem not in ("asc", "desc"):
+                return {"ok": False, "msg": "Ordenação inválida. Use 'asc' ou 'desc'."}
 
         if status:
             status = status.strip().lower()
@@ -104,9 +102,9 @@ class MidiaController:
             titulo_like=(titulo_like or None),
             genero=(genero or None),
             status=(status or None),
+            tipo=(tipo or None),
             ano=ano_int,
-            nota_op=(nota_op or None),
-            nota_val=val_int,
+            nota_ordem=nota_ordem,
         )
         return {"ok": ok, "msg": msg, "data": itens}
 

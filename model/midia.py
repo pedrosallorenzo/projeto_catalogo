@@ -96,54 +96,53 @@ class MidiaModel:
         genero: Optional[str] = None,
         status: Optional[str] = None,
         ano: Optional[int] = None,
-        nota_op: Optional[str] = None,
-        nota_val: Optional[int] = None,
+        tipo: Optional[str] = None,
+        nota_ordem: Optional[str] = None,  # "asc" | "desc" | None
     ) -> Tuple[bool, str, List[Midia]]:
+        conds: List[str] = []
+        params: List = []
+
+        if titulo_like:
+            conds.append("titulo LIKE %s")
+            params.append(f"%{titulo_like}%")
+        if genero:
+            conds.append("genero LIKE %s")
+            params.append(f"%{genero}%")
+        if status:
+            conds.append("status = %s")
+            params.append(status)
+        if tipo:
+            conds.append("tipo = %s")
+            params.append(tipo)
+        if ano:
+            conds.append("ano = %s")
+            params.append(ano)
+
+        order_clause = ""
+        if nota_ordem:
+            nota_ordem = nota_ordem.upper()
+            if nota_ordem in ("ASC", "DESC"):
+                conds.append("nota IS NOT NULL")
+                order_clause = f" ORDER BY nota {nota_ordem}"
+
+        where_clause = (" WHERE " + " AND ".join(conds)) if conds else ""
+
+        sql = (
+            "SELECT id_midia, titulo, tipo, genero, ano, status, nota "
+            f"FROM tb_midia{where_clause}{order_clause};"
+        )
 
         conn = self.db.get_connection()
         if not conn:
             return (False, "Falha na conexão com o banco.", [])
-
         try:
-            base = """
-                SELECT id_midia, titulo, tipo, genero, ano, status, nota
-                FROM tb_midia
-            """
-            conds = []
-            params: list[Any] = []
-
-            if titulo_like:
-                conds.append("titulo LIKE %s")
-                params.append(f"%{titulo_like}%")
-            if genero:
-                conds.append("genero = %s")
-                params.append(genero)
-            if status:
-                conds.append("status = %s")
-                params.append(status)
-            if ano is not None:
-                conds.append("ano = %s")
-                params.append(ano)
-            if nota_op and nota_val is not None:
-                if nota_op not in (">=", "<=", "=", ">", "<"):
-                    return (False, "Operador de nota inválido.", [])
-                conds.append(f"nota {nota_op} %s")
-                params.append(nota_val)
-
-            if conds:
-                base += " WHERE " + " AND ".join(conds)
-
-            base += " ORDER BY created_at DESC, id_midia DESC"
-
-            with conn.cursor() as cur:
-                cur.execute(base, tuple(params))
-                return (
-                    True,
-                    "Consulta filtrada realizada.",
-                    self._fetchall_as_midias(cur),
-                )
+            with conn.cursor(dictionary=True) as cur:
+                cur.execute(sql, tuple(params))
+                rows = cur.fetchall()
+                itens = [Midia(**row) for row in rows]
+            return (True, "Consulta realizada com sucesso!", itens)
         except Error as e:
-            return (False, f"Erro ao filtrar: {e}", [])
+            return (False, f"Erro ao consultar: {e}", [])
         finally:
             self.db.close_connection(conn)
 
@@ -156,6 +155,13 @@ class MidiaModel:
             return (False, "Falha na conexão com o banco.")
 
         try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT 1 FROM tb_midia WHERE id_midia = %s", (int(id_midia),)
+                )
+                if cur.fetchone() is None:
+                    return (False, "ID não encontrado.")
+
             sets = []
             params: list[Any] = []
             if status is not None:
@@ -168,15 +174,13 @@ class MidiaModel:
             if not sets:
                 return (False, "Nada para atualizar.")
 
-            params.append(id_midia)
+            params.append(int(id_midia))
             sql = f"UPDATE tb_midia SET {', '.join(sets)} WHERE id_midia = %s"
-
-            with conn.cursor() as cur:
-                cur.execute(sql, tuple(params))
-                conn.commit()
-                if cur.rowcount == 0:
-                    return (False, "ID não encontrado.")
-                return (True, "Atualizado com sucesso!")
+            cur.execute(sql, tuple(params))
+            conn.commit()
+            if cur.rowcount == 0:
+                return (True, "Nada alterado (valores iguais).")
+            return (True, "Atualizado com sucesso.")
         except Error as e:
             return (False, f"Erro ao atualizar: {e}")
         finally:
