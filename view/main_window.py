@@ -93,7 +93,7 @@ class MainWindow(ctk.CTk):
         self.f_ano.grid(row=0, column=4, padx=6, pady=6)
 
         self.f_nota_ordem = ctk.CTkOptionMenu(
-            f, values=["", "Ascendente", "Descendente"], width=140
+            f, values=["", "Crescente", "Decrescente"], width=140
         )
         self.f_nota_ordem.set("")
         self.f_nota_ordem.grid(row=0, column=5, padx=6, pady=6)
@@ -135,10 +135,10 @@ class MainWindow(ctk.CTk):
         ordem_lable = self.f_nota_ordem.get().strip().lower()
         nota_ordem = None
 
-        if ordem_lable == "ascendente":
-            nota_ordem = "asc"
-        elif ordem_lable == "descendente":
-            nota_ordem = "desc"
+        if ordem_lable == "crescente":
+            nota_ordem = "cre"
+        elif ordem_lable == "decrescente":
+            nota_ordem = "dec"
 
         res = self.controller.filtrar(
             titulo_like=self.f_titulo.get().strip(),

@@ -7,7 +7,7 @@ TIPOS_VALIDOS = {"filme", "serie"}
 STATUS_VALIDOS = {"pendente", "assistido"}
 
 
-# Classe que cria as opções do usuário
+# Classe que cria as opções do usuário (propriedades)
 @dataclass
 class Midia:
     id_midia: Optional[int] = None
@@ -100,7 +100,7 @@ class MidiaModel:
         status: Optional[str] = None,
         ano: Optional[int] = None,
         tipo: Optional[str] = None,
-        nota_ordem: Optional[str] = None,  # "asc" | "desc" | None
+        nota_ordem: Optional[str] = None,
     ) -> Tuple[bool, str, List[Midia]]:
         conds: List[str] = []
         params: List = []
@@ -124,7 +124,7 @@ class MidiaModel:
         order_clause = ""
         if nota_ordem:
             nota_ordem = nota_ordem.upper()
-            if nota_ordem in ("ASC", "DESC"):
+            if nota_ordem in ("CRE", "DEC"):
                 conds.append("nota IS NOT NULL")
                 order_clause = f" ORDER BY nota {nota_ordem}"
 
