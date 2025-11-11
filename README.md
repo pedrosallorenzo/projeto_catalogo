@@ -1,13 +1,13 @@
-# 🎬 Catálogo de Filmes & Séries
+# Catálogo de Filmes & Séries
 
 Aplicação desktop desenvolvida em **Python + MySQL**, com interface moderna feita em **CustomTkinter** e arquitetura **MVC** (Model–View–Controller).  
 Permite cadastrar, consultar, atualizar e excluir filmes e séries, além de aplicar filtros e ordenar resultados por nota.
 
-🔗 **Documentação completa:** [https://pedrosallorenzo.github.io/projeto_catalogo](https://pedrosallorenzo.github.io/projeto_catalogo)
+**Documentação completa:** [https://pedrosallorenzo.github.io/projeto_catalogo](https://pedrosallorenzo.github.io/projeto_catalogo)
 
 ---
 
-## 🚀 Funcionalidades principais
+## Funcionalidades principais
 
 - **CREATE:** cadastro de filmes e séries com validação dos campos.  
 - **READ:** listagem com filtros por título, tipo, gênero, status e ano.  
@@ -19,7 +19,7 @@ Permite cadastrar, consultar, atualizar e excluir filmes e séries, além de apl
 
 ---
 
-## 🧱 Arquitetura (MVC)
+## Arquitetura (MVC)
 
 ├── config/       # Conexão com o banco de dados (MySQL)
 ├── controller/   # Regras de negócio e ligação entre View e Model
@@ -31,7 +31,7 @@ Permite cadastrar, consultar, atualizar e excluir filmes e séries, além de apl
 
 ---
 
-## 🧱 Arquitetura (MVC)
+## Arquitetura (MVC)
 
 Banco MySQL local com tabela única:
 
