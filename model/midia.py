@@ -124,7 +124,7 @@ class MidiaModel:
         order_clause = ""
         if nota_ordem:
             nota_ordem = nota_ordem.upper()
-            if nota_ordem in ("CRE", "DEC"):
+            if nota_ordem in ("ASC", "DESC"):
                 conds.append("nota IS NOT NULL")
                 order_clause = f" ORDER BY nota {nota_ordem}"
 

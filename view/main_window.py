@@ -81,21 +81,23 @@ class MainWindow(ctk.CTk):
         self.f_genero = ctk.CTkEntry(f, placeholder_text="Gênero", width=160)
         self.f_genero.grid(row=0, column=1, padx=6, pady=6)
 
-        self.f_tipo = ctk.CTkOptionMenu(f, values=["", "Filme", "Serie"], width=120)
-        self.f_tipo.set("")
+        self.f_tipo = ctk.CTkOptionMenu(f, values=["Tipo", "Filme", "Serie"], width=120)
+        self.f_tipo.set("Tipo")
         self.f_tipo.grid(row=0, column=2, padx=6, pady=6)
 
-        self.f_status = ctk.CTkOptionMenu(f, values=[""] + list(STATUS))
-        self.f_status.set("")
+        self.f_status = ctk.CTkOptionMenu(
+            f, values=["Status", "Pendente", "Assistido"], width=140
+        )
+        self.f_status.set("Status")
         self.f_status.grid(row=0, column=3, padx=6, pady=6)
 
         self.f_ano = ctk.CTkEntry(f, placeholder_text="Ano", width=80)
         self.f_ano.grid(row=0, column=4, padx=6, pady=6)
 
         self.f_nota_ordem = ctk.CTkOptionMenu(
-            f, values=["", "Crescente", "Decrescente"], width=140
+            f, values=["Nota", "Crescente", "Decrescente"], width=140
         )
-        self.f_nota_ordem.set("")
+        self.f_nota_ordem.set("Nota")
         self.f_nota_ordem.grid(row=0, column=5, padx=6, pady=6)
 
         ctk.CTkButton(f, text="Aplicar Filtros", command=self._on_filter).grid(
@@ -132,20 +134,26 @@ class MainWindow(ctk.CTk):
 
     # Aplica os filtros que o usuário utilizou
     def _on_filter(self):
-        ordem_lable = self.f_nota_ordem.get().strip().lower()
-        nota_ordem = None
+        tipo_raw = (self.f_tipo.get() or "").strip().lower()
+        status_raw = (self.f_status.get() or "").strip().lower()
+        ordem_lab = self.f_nota_ordem.get().strip().lower()
 
-        if ordem_lable == "crescente":
-            nota_ordem = "cre"
-        elif ordem_lable == "decrescente":
-            nota_ordem = "dec"
+        tipo = "" if tipo_raw in ("", "tipo") else tipo_raw
+        status = "" if status_raw in ("", "status") else status_raw
+
+        if ordem_lab == "crescente":
+            nota_ordem = "asc"
+        elif ordem_lab == "decrescente":
+            nota_ordem = "desc"
+        else:
+            nota_ordem = None
 
         res = self.controller.filtrar(
             titulo_like=self.f_titulo.get().strip(),
             genero=self.f_genero.get().strip(),
-            status=self.f_status.get().strip(),
-            tipo=self.f_tipo.get().strip(),
             ano=self.f_ano.get().strip(),
+            status=status,
+            tipo=tipo,
             nota_ordem=nota_ordem,
         )
         if not res["ok"]:
@@ -230,12 +238,12 @@ class MainWindow(ctk.CTk):
         self.cmb_status.set(STATUS[0])
 
     def _clear_filters(self):
-        self.f_titulo.delete(0, "end")
-        self.f_genero.delete(0, "end")
-        self.f_ano.delete(0, "end")
-        self.f_nota_ordem.set("")
-        self.f_tipo.set("")
-        self.f_status.set("")
+        for w in (self.f_titulo, self.f_genero, self.f_ano):
+            w.delete(0, "end")
+
+        self.f_nota_ordem.set("Nota")
+        self.f_tipo.set("Tipo")
+        self.f_status.set("Status")
 
         self._load_all()
 
