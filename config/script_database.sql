@@ -60,9 +60,6 @@ values
 
 select * from tb_midia;
 
-alter table tb_midia
-auto_increment = 7;
-
 -- Criação de usuário para melhor conexão (opcional)
 CREATE USER 'user_dev'@'localhost' IDENTIFIED BY '<Senha do MySQL Workbanch>';
 GRANT ALL PRIVILEGES ON bd_midias.* TO 'user_dev'@'localhost';
